@@ -51,21 +51,32 @@ $ shlorem s
 # Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
 
 $ shlorem sentences 5
-# Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.
+# Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. 
+# Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
+# Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.
 
 $ shlorem -s fr words 49
-# Lorsque, par un décret des puissances suprêmes, Le Poète apparaît en ce monde ennuyé, Sa mère épouvantée et pleine de blasphèmes Crispe ses poings vers Dieu qui la prend en pitié. Ah! Que n' ai je mis bas tout un nœud de vipères, Plutôt que de nourrir cette dérision!
+# Lorsque, par un décret des puissances suprêmes, Le Poète apparaît en ce monde ennuyé, 
+# Sa mère épouvantée et pleine de blasphèmes Crispe ses poings vers Dieu qui la prend en pitié. Ah! 
+# Que n' ai je mis bas tout un nœud de vipères, Plutôt que de nourrir cette dérision!
 
 $ shlorem -s latin p 2
-# Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+# Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 
+# totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
 #
-# Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+# Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, 
+# sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
 
 $ shlorem -s se c 150
-# Han kom som ett yrväder en aprilafton och hade ett höganäskrus i en svångrem om halsen. Clara och Lotten voro inne med skötekan att hämta honom på Dal
+# Han kom som ett yrväder en aprilafton och hade ett höganäskrus i en svångrem om halsen. 
+# Clara och Lotten voro inne med skötekan att hämta honom på Dal
 
 $ shlorem -s nl w 28
-# Hoe de menschen ook gewoonlijk over mij spreken,—en ik weet maar al te goed, in welk een kwaden naam de Zotheid zelfs bij de zotsten staat—beweer ik toch,
+# Hoe de menschen ook gewoonlijk over mij spreken,—en ik weet maar al te goed, 
+# in welk een kwaden naam de Zotheid zelfs bij de zotsten staat—beweer ik toch,
+
+$ shlorem -s cn c 20
+# 人人生而自由， 在尊严和权利上一律平等。
 ```
 
 ## 🚀 Installation
