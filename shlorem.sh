@@ -15,7 +15,7 @@ flag|v|verbose|output more
 flag|f|force|do not ask for confirmation (always yes)
 option|l|log_dir|folder for log files |$HOME/log/$script_prefix
 option|t|tmp_dir|folder for temp files|.tmp
-option|s|source|text source: lorem/latin/german/french/english/swedish|lorem
+option|s|source|text source: lorem/latin/german/french/english/swedish/dutch/russian/chinese/random|lorem
 param|1|action|action to perform: chars/words/sentences/paragraphs
 param|?|input|number of text blobs to generate (default: 20)
 " | grep -v '^#' | grep -v '^\s*$'
@@ -31,29 +31,29 @@ main() {
   action=$(lower_case "$action")
   case $action in
   characters|chars|c)
-    #TIP: use «$script_prefix words» to generate a number of words
-    #TIP:> $script_prefix words 100
+    #TIP: use «$script_prefix chars» to generate a number of characters
+    #TIP:> $script_prefix chars 100
     # shellcheck disable=SC2154
     show_chars "$input"
     ;;
 
   words|w)
     #TIP: use «$script_prefix words» to generate a number of words
-    #TIP:> $script_prefix words 100
+    #TIP:> $script_prefix words 20
     # shellcheck disable=SC2154
     show_words "$input"
     ;;
 
   sentences|s)
-    #TIP: use «$script_prefix words» to generate a number of words
-    #TIP:> $script_prefix words 100
+    #TIP: use «$script_prefix sentences» to generate a number of sentences
+    #TIP:> $script_prefix sentences 10
     # shellcheck disable=SC2154
     show_sentences "$input"
     ;;
 
   paragraphs|p)
-    #TIP: use «$script_prefix words» to generate a number of words
-    #TIP:> $script_prefix words 100
+    #TIP: use «$script_prefix paragraphs» to generate a number of paragraphs
+    #TIP:> $script_prefix paragraphs 3
     # shellcheck disable=SC2154
     show_paragrapes "$input"
     ;;
