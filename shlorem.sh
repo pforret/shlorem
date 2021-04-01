@@ -1,12 +1,4 @@
 #!/usr/bin/env bash
-### ==============================================================================
-### SO HOW DO YOU PROCEED WITH YOUR SCRIPT?
-### 1. define the options/parameters and defaults you need in list_options()
-### 2. define dependencies on other programs/scripts in list_dependencies()
-### 3. implement the different actions in main() with helper functions
-### 4. implement helper functions you defined in previous step
-### ==============================================================================
-
 ### Created by Peter Forret ( pforret ) on 2021-04-01
 ### Based on https://github.com/pforret/bashew 1.15.1
 script_version="0.0.1" # if there is a VERSION.md in this script's folder, it will take priority for version number
@@ -15,25 +7,6 @@ readonly script_created="2021-04-01"
 readonly run_as_root=-1 # run_as_root: 0 = don't check anything / 1 = script MUST run as root / -1 = script MAY NOT run as root
 
 list_options() {
-  ### Change the next lines to reflect which flags/options/parameters you need
-  ### flag:   switch a flag 'on' / no value specified
-  ###     flag|<short>|<long>|<description>
-  ###     e.g. "-v" or "--verbose" for verbose output / default is always 'off'
-  ###     will be available as $<long> in the script e.g. $verbose
-  ### option: set an option / 1 value specified
-  ###     option|<short>|<long>|<description>|<default>
-  ###     e.g. "-e <extension>" or "--extension <extension>" for a file extension
-  ###     will be available a $<long> in the script e.g. $extension
-  ### list: add an list/array item / 1 value specified
-  ###     list|<short>|<long>|<description>| (default is ignored)
-  ###     e.g. "-u <user1> -u <user2>" or "--user <user1> --user <user2>"
-  ###     will be available a $<long> array in the script e.g. ${user[@]}
-  ### param:  comes after the options
-  ###     param|<type>|<long>|<description>
-  ###     <type> = 1 for single parameters - e.g. param|1|output expects 1 parameter <output>
-  ###     <type> = ? for optional parameters - e.g. param|1|output expects 1 parameter <output>
-  ###     <type> = n for list parameter    - e.g. param|n|inputs expects <input1> <input2> ... <input99>
-  ###     will be available as $<long> in the script after option/param parsing
   echo -n "
 #commented lines will be filtered
 flag|h|help|show usage
@@ -42,8 +15,9 @@ flag|v|verbose|output more
 flag|f|force|do not ask for confirmation (always yes)
 option|l|log_dir|folder for log files |$HOME/log/$script_prefix
 option|t|tmp_dir|folder for temp files|.tmp
-param|1|action|action to perform: analyze/convert
-param|?|input|input file/text
+option|s|source|text source: lorem/latin/german/french/english/swedish|lorem
+param|1|action|action to perform: chars/words/sentences/paragraphs
+param|?|input|number of text blobs to generate (default: 20)
 " | grep -v '^#' | grep -v '^\s*$'
 }
 
@@ -56,19 +30,32 @@ main() {
 
   action=$(lower_case "$action")
   case $action in
-  action1)
-    #TIP: use «$script_prefix action1» to ...
-    #TIP:> $script_prefix action1 input.txt
+  characters|chars|c)
+    #TIP: use «$script_prefix words» to generate a number of words
+    #TIP:> $script_prefix words 100
     # shellcheck disable=SC2154
-    do_action1 "$input"
+    show_chars "$input"
     ;;
 
-  action2)
-    #TIP: use «$script_prefix action2» to ...
-    #TIP:> $script_prefix action2 input.txt output.pdf
-
+  words|w)
+    #TIP: use «$script_prefix words» to generate a number of words
+    #TIP:> $script_prefix words 100
     # shellcheck disable=SC2154
-    do_action2 "$input" "$output"
+    show_words "$input"
+    ;;
+
+  sentences|s)
+    #TIP: use «$script_prefix words» to generate a number of words
+    #TIP:> $script_prefix words 100
+    # shellcheck disable=SC2154
+    show_sentences "$input"
+    ;;
+
+  paragraphs|p)
+    #TIP: use «$script_prefix words» to generate a number of words
+    #TIP:> $script_prefix words 100
+    # shellcheck disable=SC2154
+    show_paragrapes "$input"
     ;;
 
   check|env)
@@ -100,21 +87,80 @@ main() {
 ## Put your helper scripts here
 #####################################################################
 
-do_action1() {
-  log_to_file "action1 [$input]"
-  # Examples of required binaries/scripts and how to install them
-  # require_binary "convert" "imagemagick"
-  # require_binary "progressbar" "basher install pforret/progressbar"
-  # (code)
+show_chars() {
+  local nb_chars=${input:-100}
+  debug "generate $nb_chars chars"
+  # shellcheck disable=SC2154
+  load_source "$source" |
+  cut -c1-"$nb_chars"
 }
 
-do_action2() {
-  log_to_file "action2 [$input]"
-  # (code)
+show_words() {
+  local nb_words=${input:-20}
+  debug "generate $nb_words words"
+  # shellcheck disable=SC2154
+  load_source "$source" |
+  tr ' ' "\n" |
+  head -"$nb_words" |
+  tr "\n" " "
+  echo ""
+}
 
+show_sentences() {
+  local nb_lines=${input:-3}
+  debug "generate $nb_lines sentences"
+  # shellcheck disable=SC2154
+  load_source "$source" |
+  tr '.' "\n" |
+  head -"$nb_lines" |
+  tr "\n" "."
+  echo ""
+}
+
+show_paragraphs() {
+  local nb_lines=${input:-3}
+  debug "generate $nb_lines paragraphs"
+  # shellcheck disable=SC2154
+  load_source "$source" |
+  tr '.' "\n" |
+  head -"$nb_lines" |
+  tr "\n" "."
+  echo ""
 }
 
 
+load_source(){
+  case ${1:-lorem} in
+  latin|cicero)   echo "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
+    ;;
+  it|italian|decamerone) echo "Ser Cepperello con una falsa confessione inganna uno santo frate, e muorsi; ed essendo stato un pessimo uomo in vita, è morto reputato per santo e chiamato san Ciappelletto. Convenevole cosa è, carissime donne, che ciascheduna cosa la quale l’uomo fa, dallo ammirabile e santo nome di Colui il quale di tutte fu facitore le dea principio. Per che, dovendo io al nostro novellare, sì come primo, dare cominciamento, intendo da una delle sue maravigliose cose incominciare, acciò che, quella udita, la nostra speranza in lui, sì come in cosa impermutabile, si fermi e sempre sia da noi il suo nome lodato.  Manifesta cosa è che, sì come le cose temporali tutte sono transitorie e mortali, così in sé e fuor di sé essere piene di noia e d’angoscia e di fatica e ad infiniti pericoli soggiacere; alle quali senza niuno fallo né potremmo noi, che viviamo mescolati in esse e che siamo parte d’esse, durare né ripararci, se spezial grazia di Dio forza e avvedimento non ci prestasse. La quale a noi e in noi non è da credere che per alcuno nostro merito discenda, ma dalla sua propia benignità mossa e da prieghi di coloro impetrata che, sì come noi siamo, furon mortali, e bene i suoi piaceri mentre furono in vita seguendo, ora con lui etterni sono divenuti e beati; alli quali noi medesimi, sì come a procuratori informati per esperienza della nostra fragilità, forse non audaci di porgere i prieghi nostri nel cospetto di tanto giudice, delle cose le quali a noi reputiamo opportune gli porgiamo."
+    ;;
+  de|goethe|german) echo "Ihr naht euch wieder, schwankende Gestalten! Die früh sich einst dem trüben Blick gezeigt. Versuch’ ich wohl euch diesmal fest zu halten? Fühl’ ich mein Herz noch jenem Wahn geneigt? Ihr drängt euch zu! nun gut, so mögt ihr walten. Wie ihr aus Dunst und Nebel um mich steigt. Mein Busen fühlt sich jugendlich erschüttert. Vom Zauberhauch der euren Zug umwittert. Ihr bringt mit euch die Bilder froher Tage. Und manche liebe Schatten steigen auf Gleich einer alten, halbverklungnen Sage. Kommt erste Lieb’ und Freundschaft mit herauf Der Schmerz wird neu, es wiederholt die Klage. Des Lebens labyrinthisch irren Lauf, Und nennt die Guten, die, um schöne Stunden Vom Glück getäuscht, vor mir hinweggeschwunden."
+  ;;
+  fr|baudelaire|french) echo "Lorsque, par un décret des puissances suprêmes, Le Poète apparaît en ce monde ennuyé, Sa mère épouvantée et pleine de blasphèmes Crispe ses poings vers Dieu qui la prend en pitié. Ah! Que n' ai je mis bas tout un nœud de vipères, Plutôt que de nourrir cette dérision! Maudite soit la nuit aux plaisirs éphémères Où mon ventre a conçu mon expiation! Puisque tu m’as choisie entre toutes les femmes Pour être le dégoût de mon triste mari. Et que je ne puis pas rejeter dans les flammes, Comme un billet d’amour, ce monstre rabougri. Je ferai rejaillir ta haine qui m’accable Sur l’instrument maudit de tes méchancetés, Et je tordrai si bien cet arbre misérable Qu’il ne pourra pousser ses boutons empestés!"
+  ;;
+  se|strindberg|swedish) echo "Han kom som ett yrväder en aprilafton och hade ett höganäskrus i en svångrem om halsen. Clara och Lotten voro inne med skötekan att hämta honom på Dalarö brygga; men det dröjde evigheter, innan de kommo i båt. De skulle till handelsman och ha en tunna tjära och på abeteket och hämta gråsalva åt grisen, och så skulle de på posten och få ett frimärke, och så skulle de ner till Fia Lövström i Kroken och låna tuppen mot ett halvpund småtärna till notbygget, och sist hade de hamnat på gästgivaregården, där Carlsson bjudit på kaffe med dopp. Och så kommo de äntligen i båt, men Carlsson ville styra, och det kunde han inte, för han hade aldrig sett en råseglare förr, och därför skrek han, att de skulle hissa focken, som inte fanns. Och på tullbryggan stodo lotsar och vaktmästare och grinade åt manövern, när ekan gick över stag och länsade ner åt Saltsäcken. Hörru, du har hål i båten! skrek en lotslärling genom vinden; Stopp till! stopp till! och medan Carlsson tittade efter hålen, hade Clara knuffat undan honom och tagit roret, och med årorna lyckades Lotten få ekan opp i vinden igen, så att nu strök det ner åt Aspösund med god gång. Carlsson var en liten fyrkantig värmländing med blå ögon och näsa krokig som en syskonhake. Livlig, lekfull och nyfiken var han, men sjöaffärerna förstod han inte alls, och han var också kallad ut till Hemsö för att ta hand om åker och kreatur, som ingen annan ville ta befattning med, sedan gubben Flod gått ur livet och änkan satt ensam vid gården. Men när Carlsson nu ville börja pumpa flickorna om ställningar och förhållanden, så fick han riktiga skärkarlssvar. Ja si, det vet jag inte! Ja si, det kan jag inte säga! Ja si, det vet jag rakt inte."
+  ;;
+
+  en|poe|english) echo "Once upon a midnight dreary, while I pondered, weak and weary. Over many a quaint and curious volume of forgotten lore.  While I nodded, nearly napping, suddenly there came a tapping.  As of some one gently rapping, rapping at my chamber door.  'Tis some visiter, I muttered, tapping at my chamber door.  Only this, and nothing more. Ah, distinctly I remember it was in the bleak December. And each separate dying ember wrought its ghost upon the floor.  Eagerly I wished the morrow;—vainly I had sought to borrow. From my books surcease of sorrow—sorrow for the lost Lenore. For the rare and radiant maiden whom the angels name Lenore. Nameless here for evermore.  And the silken sad uncertain rustling of each purple curtain Thrilled me, filled me with fantastic terrors never felt before; So that now, to still the beating of my heart, I stood repeating Tis some visiter entreating entrance at my chamber door.  Some late visiter entreating entrance at my chamber door.  This it is, and nothing more.  Presently my soul grew stronger; hesitating then no longer.  Sir, said I, or Madam, truly your forgiveness I implore.  But the fact is I was napping, and so gently you came rapping, And so faintly you came tapping, tapping at my chamber door.  That I scarce was sure I heard you, here I opened wide the door.  Darkness there, and nothing more.  Deep into that darkness peering, long I stood there wondering, fearing.  Doubting, dreaming dreams no mortal ever dared to dream before; But the silence was unbroken, and the darkness gave no token.  And the only word there spoken was the whispered word, Lenore!  This I whispered, and an echo murmured back the word, Lenore!  Merely this, and nothing more."
+  ;;
+
+  nl|dutch|erasmus) echo "Hoe de menschen ook gewoonlijk over mij spreken,—en ik weet maar al te goed, in welk een kwaden naam de Zotheid zelfs bij de zotsten staat—beweer ik toch, dat ik en ik alleen door mijn goddelijke macht Goden en menschen vervroolijk. Hiervan is dit zeker een meer dan voldoend bewijs, dat, zoodra ik voor deze zoo talrijke vergadering was opgetreden om het woord te voeren, eensklaps uw aller aangezichten zoo blonken van een ongekende en ongewone vreugde, dat gij zoo plotseling het voorhoofd ontrimpelde en mij met zulk een blijden en beminnelijken lach toejuichte, dat gij allen, die ik hier uit alle hoeken der wereld voor mij zie, waarlijk niemand uitgezonderd, gelijk de Goden bij Homerus, te veel nectar met nepenthes schijnt gebruikt te hebben, terwijl ge vroeger [16]zoo bedroefd en bekommerd waart neergezeten, alsof ge nog pas uit Trophonius’ hol waart teruggekomen. Maar ’t gaat hiermede als wanneer de zon het eerst haar schoon en gulden gelaat aan ’t aardrijk vertoont of na een strengen winter de lente opnieuw den zoelen adem der westenwinden brengt: dan verandert aanstonds het voorkomen van alles, dan krijgt alles een nieuwe kleur en een geheel nieuwe jeugd en zoo veranderde ook dadelijk op mijn aanblik uw voorkomen."
+  ;;
+
+  ru|russian) echo "Все люди рождаются свободными и равными в своем достоинстве и правах. Они наделены разумом и совестью и должны поступать в отношении друг друга в духе братства. Каждый человек должен обладать всеми правами и всеми свободами, провозглашенными настоящей Декларацией, без какого бы то ни было различия, как-то в отношении расы, цвета кожи, пола, языка, религии, политических или иных убеждений, национального или социального происхождения, имущественного, сословного или иного положения. Кроме того, не должно проводиться никакого различия на основе политического, правового или международного статуса страны или территории, к которой человек принадлежит, независимо от того, является ли эта территория независимой, подопечной, несамоуправляющейся или как-либо иначе ограниченной в своем суверенитете. Каждый человек имеет право на жизнь, на свободу и на личную неприкосновенность. Никто не должен содержаться в рабстве или в подневольном состоянии; рабство и работорговля запрещаются во всех их видах. Никто не должен подвергаться пыткам или жестоким, бесчеловечным или унижающим его достоинство обращению и наказанию. Каждый человек, где бы он ни находился, имеет право на признание его правосубъектности."
+  ;;
+
+  cn|chinese) echo "人人生而自由， 在尊严和权利上一律平等。 他们赋有理性和良心， 并应以兄弟关系的精神相对待。  人人有资格享有本宣言所载的一切权利和自由， 不分种族、 肤色、 性别、 语言、 宗教、 政治或其他见解、 国籍或社会出身、 财产、 出生或其他身分等任何区别。 并且不得因一人所属的国家或领土的政治的、 行政的或者国际的地位之不同而有所区别， 无论该领土是独立领土、 托管领土、 非自治领土或者处于其他任何主权受限制的情况之下。 人人有权享有生命、自由和人身安全。 任何人不得使为奴隶或奴役； 一切形式的奴隶制度和奴隶买卖， 均应予以禁止。 任何人不得加以酷刑，或施以残忍的、不人道的或侮辱性的待遇或刑罚。 人人在任何地方有权被承认在法律前的人格。 法律之前人人平等，并有权享受法律的平等保护，不受任何歧视。人人有权享受平等保护，以免受违反本宣言的任何歧视行为以及煽动这种歧视的任何行为之害。 任何人当宪法或法律所赋予他的基本权利遭受侵害时，有权由合格的国家法庭对这种侵害行为作有效的补救。 任何人不得加以任意逮捕、拘禁或放逐。 人人完全平等地有权由一个独立而无偏倚的法庭进行公正的和公开的审讯，以确定他的权利和义务并判定对他提出的任何刑事指控。 ㈠ 凡受刑事控告者，在未经获得辩护上所需的一切保证的公开审判而依法证实有罪以前，有权被视为无罪。 ㈡ 任何人的任何行为或不行为， 在其发生时依国家法或国际法均不构成刑事罪者， 不得被判为犯有刑事罪。 刑罚不得重于犯罪时适用的法律规定。"
+  ;;
+
+  rnd|random) base64 /dev/urandom | tr '/+' '\n\n' | awk '/^.+$/{gsub(/[0-9]/,"_"); print}' | head -500 | tr '\n' '. ' | awk '{ gsub(/(_+)/," "); print }'
+  ;;
+
+  # regular lorem ipsum in latin
+  *)    echo "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui."
+  esac
+}
 #####################################################################
 ################### DO NOT MODIFY BELOW THIS LINE ###################
 #####################################################################
@@ -186,7 +232,7 @@ initialise_output() {
 
 out() {     ((quiet)) && true || printf '%b\n' "$*"; }
 debug() {   if ((verbose)); then out "${col_ylw}# $* ${col_reset}" >&2; else true; fi; }
-die() {     out "${col_red}${char_fail} $script_basename${col_reset}: $*" >&2 ; safe_exit ; }
+die() {     out "${col_red}${char_fail} $script_basename${col_reset}: $*" >&2 ;   tput bel; safe_exit ; }
 alert() {   out "${col_red}${char_alrt}${col_reset}: $*" >&2 ; }
 success() { out "${col_grn}${char_succ}${col_reset}  $*"; }
 announce() { out "${col_grn}${char_wait}${col_reset}  $*"; sleep 1 ; }
@@ -282,7 +328,6 @@ trap "die \"ERROR \$? after \$SECONDS seconds \n\
 # cf https://askubuntu.com/questions/513932/what-is-the-bash-command-variable-good-for
 
 safe_exit() {
-  tput bel
   [[ -n "${tmp_file:-}" ]] && [[ -f "$tmp_file" ]] && rm "$tmp_file"
   trap - INT TERM EXIT
   debug "$script_basename finished after $SECONDS seconds"
