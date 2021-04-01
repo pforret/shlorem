@@ -77,6 +77,9 @@ $ shlorem -s nl w 28
 
 $ shlorem -s cn c 20
 # 人人生而自由， 在尊严和权利上一律平等。
+
+$ shlorem -s rnd w 24
+# Angling absorbent gene loom hart blowiest smoochy limey metros mils molly slopes. Piasters cutlets aspects mingling scapulars seating archers nosedived leave mender lofts
 ```
 
 ## 🚀 Installation

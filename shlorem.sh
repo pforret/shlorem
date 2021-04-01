@@ -99,10 +99,11 @@ show_words() {
   local nb_words=${input:-20}
   debug "generate $nb_words words"
   # shellcheck disable=SC2154
-  load_source "$source" |
+  load_source "$source" "$nb_words" |
   tr ' ' "\n" |
   head -"$nb_words" |
-  tr "\n" " "
+  tr "\n" " " |
+  sed 's/ \././g'
   echo ""
 }
 
@@ -113,7 +114,8 @@ show_sentences() {
   load_source "$source" |
   tr '.' "\n" |
   head -"$nb_lines" |
-  tr "\n" "."
+  tr "\n" "." |
+  sed 's/ \././g'
   echo ""
 }
 
@@ -130,10 +132,14 @@ show_paragraphs() {
 
 
 load_source(){
-  case ${1:-lorem} in
+  local source=${1:-lorem}
+  local words=${2:-500}
+
+  case "$source" in
   latin|cicero)   echo "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
     ;;
-  it|italian|decamerone) echo "Ser Cepperello con una falsa confessione inganna uno santo frate, e muorsi; ed essendo stato un pessimo uomo in vita, è morto reputato per santo e chiamato san Ciappelletto. Convenevole cosa è, carissime donne, che ciascheduna cosa la quale l’uomo fa, dallo ammirabile e santo nome di Colui il quale di tutte fu facitore le dea principio. Per che, dovendo io al nostro novellare, sì come primo, dare cominciamento, intendo da una delle sue maravigliose cose incominciare, acciò che, quella udita, la nostra speranza in lui, sì come in cosa impermutabile, si fermi e sempre sia da noi il suo nome lodato.  Manifesta cosa è che, sì come le cose temporali tutte sono transitorie e mortali, così in sé e fuor di sé essere piene di noia e d’angoscia e di fatica e ad infiniti pericoli soggiacere; alle quali senza niuno fallo né potremmo noi, che viviamo mescolati in esse e che siamo parte d’esse, durare né ripararci, se spezial grazia di Dio forza e avvedimento non ci prestasse. La quale a noi e in noi non è da credere che per alcuno nostro merito discenda, ma dalla sua propia benignità mossa e da prieghi di coloro impetrata che, sì come noi siamo, furon mortali, e bene i suoi piaceri mentre furono in vita seguendo, ora con lui etterni sono divenuti e beati; alli quali noi medesimi, sì come a procuratori informati per esperienza della nostra fragilità, forse non audaci di porgere i prieghi nostri nel cospetto di tanto giudice, delle cose le quali a noi reputiamo opportune gli porgiamo."
+
+    it|italian|decamerone) echo "Ser Cepperello con una falsa confessione inganna uno santo frate, e muorsi; ed essendo stato un pessimo uomo in vita, è morto reputato per santo e chiamato san Ciappelletto. Convenevole cosa è, carissime donne, che ciascheduna cosa la quale l’uomo fa, dallo ammirabile e santo nome di Colui il quale di tutte fu facitore le dea principio. Per che, dovendo io al nostro novellare, sì come primo, dare cominciamento, intendo da una delle sue maravigliose cose incominciare, acciò che, quella udita, la nostra speranza in lui, sì come in cosa impermutabile, si fermi e sempre sia da noi il suo nome lodato.  Manifesta cosa è che, sì come le cose temporali tutte sono transitorie e mortali, così in sé e fuor di sé essere piene di noia e d’angoscia e di fatica e ad infiniti pericoli soggiacere; alle quali senza niuno fallo né potremmo noi, che viviamo mescolati in esse e che siamo parte d’esse, durare né ripararci, se spezial grazia di Dio forza e avvedimento non ci prestasse. La quale a noi e in noi non è da credere che per alcuno nostro merito discenda, ma dalla sua propia benignità mossa e da prieghi di coloro impetrata che, sì come noi siamo, furon mortali, e bene i suoi piaceri mentre furono in vita seguendo, ora con lui etterni sono divenuti e beati; alli quali noi medesimi, sì come a procuratori informati per esperienza della nostra fragilità, forse non audaci di porgere i prieghi nostri nel cospetto di tanto giudice, delle cose le quali a noi reputiamo opportune gli porgiamo."
     ;;
   de|goethe|german) echo "Ihr naht euch wieder, schwankende Gestalten! Die früh sich einst dem trüben Blick gezeigt. Versuch’ ich wohl euch diesmal fest zu halten? Fühl’ ich mein Herz noch jenem Wahn geneigt? Ihr drängt euch zu! nun gut, so mögt ihr walten. Wie ihr aus Dunst und Nebel um mich steigt. Mein Busen fühlt sich jugendlich erschüttert. Vom Zauberhauch der euren Zug umwittert. Ihr bringt mit euch die Bilder froher Tage. Und manche liebe Schatten steigen auf Gleich einer alten, halbverklungnen Sage. Kommt erste Lieb’ und Freundschaft mit herauf Der Schmerz wird neu, es wiederholt die Klage. Des Lebens labyrinthisch irren Lauf, Und nennt die Guten, die, um schöne Stunden Vom Glück getäuscht, vor mir hinweggeschwunden."
   ;;
@@ -154,14 +160,54 @@ load_source(){
   cn|chinese) echo "人人生而自由， 在尊严和权利上一律平等。 他们赋有理性和良心， 并应以兄弟关系的精神相对待。  人人有资格享有本宣言所载的一切权利和自由， 不分种族、 肤色、 性别、 语言、 宗教、 政治或其他见解、 国籍或社会出身、 财产、 出生或其他身分等任何区别。 并且不得因一人所属的国家或领土的政治的、 行政的或者国际的地位之不同而有所区别， 无论该领土是独立领土、 托管领土、 非自治领土或者处于其他任何主权受限制的情况之下。 人人有权享有生命、自由和人身安全。 任何人不得使为奴隶或奴役； 一切形式的奴隶制度和奴隶买卖， 均应予以禁止。 任何人不得加以酷刑，或施以残忍的、不人道的或侮辱性的待遇或刑罚。 人人在任何地方有权被承认在法律前的人格。 法律之前人人平等，并有权享受法律的平等保护，不受任何歧视。人人有权享受平等保护，以免受违反本宣言的任何歧视行为以及煽动这种歧视的任何行为之害。 任何人当宪法或法律所赋予他的基本权利遭受侵害时，有权由合格的国家法庭对这种侵害行为作有效的补救。 任何人不得加以任意逮捕、拘禁或放逐。 人人完全平等地有权由一个独立而无偏倚的法庭进行公正的和公开的审讯，以确定他的权利和义务并判定对他提出的任何刑事指控。 ㈠ 凡受刑事控告者，在未经获得辩护上所需的一切保证的公开审判而依法证实有罪以前，有权被视为无罪。 ㈡ 任何人的任何行为或不行为， 在其发生时依国家法或国际法均不构成刑事罪者， 不得被判为犯有刑事罪。 刑罚不得重于犯罪时适用的法律规定。"
   ;;
 
-  # shellcheck disable=SC2020
-  rnd|random) base64 /dev/urandom | tr '/+' '\n\n' | awk '/^.+$/{gsub(/[0-9]/,"_"); print}' | head -500 | tr '\n' '. ' | awk '{ gsub(/(_+)/," "); print }'
+  rnd|random)
+    words_per_line=12
+    lines=$((words / words_per_line))
+    if [[ $lines -gt 1 ]] ; then
+      debug "$lines lines of 10 words."
+      for (( i = 1; i <= $lines; i++ )); do
+        debug "line $i"
+        random_words "$words_per_line"
+      done |
+      xargs
+    else
+      debug "1 line of $words words."
+        random_words "$words" |
+      xargs
+    fi
   ;;
 
-  # regular lorem ipsum in latin
-  *)    echo "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui."
+  *)    echo "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Malesuada fames ac turpis egestas. Ornare arcu dui vivamus arcu felis bibendum. Arcu vitae elementum curabitur vitae nunc sed velit dignissim sodales. In fermentum posuere urna nec tincidunt praesent. Ac tincidunt vitae semper quis lectus nulla at volutpat. Ut venenatis tellus in metus vulputate. In ante metus dictum at tempor commodo ullamcorper a. Nulla at volutpat diam ut venenatis tellus in. Ut ornare lectus sit amet est placerat in egestas erat. Viverra justo nec ultrices dui. Dignissim diam quis enim lobortis scelerisque. Ut sem nulla pharetra diam sit amet. Mauris sit amet massa vitae tortor condimentum lacinia quis vel. Pharetra convallis posuere morbi leo urna. Duis ut diam quam nulla portitor massa id neque. Integer feugiat scelerisque varius morbi enim. Eu volutpat odio facilisis mauris sit amet massa vitae tortor. Risus ultricies tristique nulla aliquet enim tortor at auctor urna. Ridiculus mus mauris vitae ultricies. Neque egestas congue quisque egestas diam in arcu cursus. Ipsum faucibus vitae aliquet nec ullamcorper sit amet risus nullam. Scelerisque fermentum dui faucibus in ornare. Laoreet sit amet cursus sit amet dictum sit amet. Venenatis a condimentum vitae sapien pellentesque habitant morbi tristique. Ornare arcu dui vivamus arcu. Faucibus et molestie ac feugiat sed lectus vestibulum mattis ullamcorper. Egestas diam in arcu cursus euismod quis. Vitae suscipit tellus mauris a diam maecenas. Arcu felis bibendum ut tristique et egestas quis ipsum. Faucibus purus in massa tempor nec feugiat nisl pretium. Egestas congue quisque egestas diam in. Sagittis purus sit amet volutpat consequat mauris nunc congue nisi. Mauris rhoncus aenean vel elit scelerisque mauris pellentesque pulvinar pellentesque. Malesuada bibendum arcu vitae elementum curabitur vitae nunc sed. Ullamcorper malesuada proin libero nunc consequat. At varius vel pharetra vel turpis nunc eget lorem."
+    ;;
+
   esac
+
 }
+
+random_words() {
+  local nb_words="${1:-15}"
+  (
+    if aspell -v >/dev/null 2>&1; then
+      aspell -d en dump master | aspell -l en expand
+    elif [[ -f /usr/share/dict/words ]]; then
+      # works on MacOS
+      cat /usr/share/dict/words
+    elif [[ -f /usr/dict/words ]]; then
+      cat /usr/dict/words
+    else
+      printf 'zero,one,two,three,four,five,six,seven,eight,nine,ten,alfa,bravo,charlie,delta,echo,foxtrot,golf,hotel,india,juliet,kilo,lima,mike,november,oscar,papa,quebec,romeo,sierra,tango,uniform,victor,whiskey,xray,yankee,zulu%.0s' {1..3000} |
+        tr ',' "\n"
+    fi
+  ) |
+  awk 'length($1) > 2 && length($1) < 10 {print}' |
+  grep -v "'" |
+  grep -v " " |
+  shuf -n "$nb_words" |
+  xargs |
+  awk '{ print toupper(substr($0,1,1)) tolower(substr($0,2));}'
+  echo ". "
+}
+
 #####################################################################
 ################### DO NOT MODIFY BELOW THIS LINE ###################
 #####################################################################
