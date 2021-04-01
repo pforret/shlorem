@@ -12,8 +12,8 @@ Lorem Ipsum generator for the command line
 
 ## 🔥 Usage
 ```
-Program: shlorem 1.0.0 by peter@forret.com
-Updated: Apr  1 20:25:37 2021
+Program: shlorem 1.1.0 by peter@forret.com
+Updated: Apr  1 22:47:45 2021
 Description: Lorem Ipsum generator for the command line
 Usage: shlorem [-h] [-q] [-v] [-f] [-l <log_dir>] [-t <tmp_dir>] [-s <source>] <action> <input?>
 Flags, options and parameters:
