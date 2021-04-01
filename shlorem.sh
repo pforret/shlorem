@@ -55,7 +55,7 @@ main() {
     #TIP: use «$script_prefix paragraphs» to generate a number of paragraphs
     #TIP:> $script_prefix paragraphs 3
     # shellcheck disable=SC2154
-    show_paragrapes "$input"
+    show_paragraphs "$input"
     ;;
 
   check|env)
@@ -122,10 +122,10 @@ show_paragraphs() {
   debug "generate $nb_lines paragraphs"
   # shellcheck disable=SC2154
   load_source "$source" |
-  tr '.' "\n" |
+  awk '{gsub(/\./,".\n"); gsub(/\%/,",\n"); print;}' |
+  awk -v maxline=150 '{ linelen+=length($0); if (linelen > maxline){print $0; linelen=0} else {printf "%s",$0}}' |
   head -"$nb_lines" |
-  tr "\n" "."
-  echo ""
+  awk '{print $0 "\n" ;}'
 }
 
 
