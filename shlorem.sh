@@ -154,6 +154,7 @@ load_source(){
   cn|chinese) echo "人人生而自由， 在尊严和权利上一律平等。 他们赋有理性和良心， 并应以兄弟关系的精神相对待。  人人有资格享有本宣言所载的一切权利和自由， 不分种族、 肤色、 性别、 语言、 宗教、 政治或其他见解、 国籍或社会出身、 财产、 出生或其他身分等任何区别。 并且不得因一人所属的国家或领土的政治的、 行政的或者国际的地位之不同而有所区别， 无论该领土是独立领土、 托管领土、 非自治领土或者处于其他任何主权受限制的情况之下。 人人有权享有生命、自由和人身安全。 任何人不得使为奴隶或奴役； 一切形式的奴隶制度和奴隶买卖， 均应予以禁止。 任何人不得加以酷刑，或施以残忍的、不人道的或侮辱性的待遇或刑罚。 人人在任何地方有权被承认在法律前的人格。 法律之前人人平等，并有权享受法律的平等保护，不受任何歧视。人人有权享受平等保护，以免受违反本宣言的任何歧视行为以及煽动这种歧视的任何行为之害。 任何人当宪法或法律所赋予他的基本权利遭受侵害时，有权由合格的国家法庭对这种侵害行为作有效的补救。 任何人不得加以任意逮捕、拘禁或放逐。 人人完全平等地有权由一个独立而无偏倚的法庭进行公正的和公开的审讯，以确定他的权利和义务并判定对他提出的任何刑事指控。 ㈠ 凡受刑事控告者，在未经获得辩护上所需的一切保证的公开审判而依法证实有罪以前，有权被视为无罪。 ㈡ 任何人的任何行为或不行为， 在其发生时依国家法或国际法均不构成刑事罪者， 不得被判为犯有刑事罪。 刑罚不得重于犯罪时适用的法律规定。"
   ;;
 
+  # shellcheck disable=SC2020
   rnd|random) base64 /dev/urandom | tr '/+' '\n\n' | awk '/^.+$/{gsub(/[0-9]/,"_"); print}' | head -500 | tr '\n' '. ' | awk '{ gsub(/(_+)/," "); print }'
   ;;
 
@@ -625,7 +626,7 @@ parse_options() {
 
 require_binary(){
   binary="$1"
-  path_binary=$(which "$binary" 2>/dev/null)
+  path_binary=$(command -v "$binary" 2>/dev/null)
   [[ -n "$path_binary" ]] && debug "️$require_icon required [$binary] -> $path_binary" && return 0
   #
   words=$(echo "${2:-}" | wc -l)
@@ -717,7 +718,7 @@ lookup_script_data() {
     install_package="brew install"
     ;;
   Linux | GNU*)
-    if [[ $(which lsb_release) ]]; then
+    if [[ $(command -v lsb_release) ]]; then
       # 'normal' Linux distributions
       os_name=$(lsb_release -i)    # Ubuntu
       os_version=$(lsb_release -r) # 20.04
