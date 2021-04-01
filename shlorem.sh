@@ -164,8 +164,8 @@ load_source(){
     words_per_line=12
     lines=$((words / words_per_line))
     if [[ $lines -gt 1 ]] ; then
-      debug "$lines lines of 10 words."
-      for (( i = 1; i <= $lines; i++ )); do
+      debug "$lines lines of $words_per_line words."
+      for (( i = 1; i <= "$lines"; i++ )); do
         debug "line $i"
         random_words "$words_per_line"
       done |
