@@ -12,7 +12,7 @@ Lorem Ipsum generator for the command line
 
 ## 🔥 Usage
 ```
-Program: shlorem 1.1.0 by peter@forret.com
+Program: shlorem 1.1.1 by peter@forret.com
 Updated: Apr  1 22:47:45 2021
 Description: Lorem Ipsum generator for the command line
 Usage: shlorem [-h] [-q] [-v] [-f] [-l <log_dir>] [-t <tmp_dir>] [-s <source>] <action> <input?>
@@ -79,7 +79,8 @@ $ shlorem -s cn c 20
 # 人人生而自由， 在尊严和权利上一律平等。
 
 $ shlorem -s rnd w 24
-# Angling absorbent gene loom hart blowiest smoochy limey metros mils molly slopes. Piasters cutlets aspects mingling scapulars seating archers nosedived leave mender lofts
+# Angling absorbent gene loom hart blowiest smoochy limey metros mils molly slopes. 
+# Piasters cutlets aspects mingling scapulars seating archers nosedived leave mender lofts
 ```
 
 ## 🚀 Installation
