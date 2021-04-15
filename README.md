@@ -8,7 +8,9 @@
 
 # shlorem
 
-Lorem Ipsum generator for the command line
+![shlorem](assets/lorem.jpg)
+
+Lorem Ipsum generator for the command line &bull; multiple languages &bull; arbitrary length
 
 ## 🔥 Usage
 ```
