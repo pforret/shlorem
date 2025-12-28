@@ -124,7 +124,7 @@ show_paragraphs() {
   debug "generate $nb_lines paragraphs"
   # shellcheck disable=SC2154
   load_source "$source" |
-  awk '{gsub(/\./,".\n"); gsub(/\%/,",\n"); print;}' |
+  awk '{gsub(/\./,".\n"); gsub(/%/,",\n"); print;}' |
   awk -v maxline=150 '{ linelen+=length($0); if (linelen > maxline){print $0; linelen=0} else {printf "%s",$0}}' |
   head -"$nb_lines" |
   awk '{print $0 "\n" ;}'
